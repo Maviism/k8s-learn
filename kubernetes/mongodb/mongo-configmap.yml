@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap # Resource untuk menyimpan konfigurasi non-rahasia
+metadata:
+  name: mongo-config # Nama ConfigMap yang akan direferensikan oleh pod
+data:
+  mongo.conf: | # File konfigurasi MongoDB yang akan di-mount ke container
+    storage:
+      dbPath: /data/db # Path penyimpanan database di dalam container

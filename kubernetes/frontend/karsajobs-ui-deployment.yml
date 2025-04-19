@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment # Resource untuk mengelola aplikasi frontend dengan replika
+metadata:
+  name: karsajobs-ui # Nama deployment frontend
+spec:
+  replicas: 1 # Jumlah Pod yang akan dibuat dan dikelola
+  selector:
+    matchLabels:
+      app: karsajobs-ui # Selector untuk Pod yang dikelola deployment
+  template:
+    metadata:
+      labels:
+        app: karsajobs-ui # Label untuk Pod frontend
+    spec:
+      containers:
+        - name: karsajobs-ui # Nama container frontend
+          image: ghcr.io/maviism/karsajobs-ui:latest # Image frontend yang digunakan
+          ports:
+            - containerPort: 80 # Port frontend yang diekspos di dalam container

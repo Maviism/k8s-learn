@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment # Resource untuk mengelola aplikasi stateless dengan replika
+metadata:
+  name: karsajobs # Nama deployment
+spec:
+  replicas: 1 # Jumlah Pod yang akan dibuat dan dikelola
+  selector:
+    matchLabels:
+      app: karsajobs # Selector untuk Pod yang dikelola deployment
+  template:
+    metadata:
+      labels:
+        app: karsajobs # Label untuk Pod backend
+    spec:
+      containers:
+        - name: karsajobs # Nama container
+          image: ghcr.io/maviism/karsajobs:latest # Image backend yang digunakan
+          ports:
+            - containerPort: 8080 # Port backend yang diekspos di dalam container
+          env: # Environment variables untuk konfigurasi aplikasi
+            - name: APP_PORT
+              value: "8080" # Port aplikasi backend
+            - name: MONGO_HOST
+              value: "mongodb-service" # DNS name dari MongoDB service di dalam cluster
+            - name: MONGO_USER # Username MongoDB dari secret
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_ROOT_USERNAME
+            - name: MONGO_PASS # Password MongoDB dari secret
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_ROOT_PASSWORD

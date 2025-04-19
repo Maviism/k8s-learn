@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet # StatefulSet untuk aplikasi stateful seperti database yang membutuhkan identitas jaringan & penyimpanan stabil
+metadata:
+  name: mongodb # Nama StatefulSet
+spec:
+  serviceName: "mongodb-service" # Nama service yang terkait dengan StatefulSet
+  replicas: 1 # Jumlah Pod yang akan dibuat (hanya 1 instance MongoDB)
+  selector:
+    matchLabels:
+      app: mongodb # Selector untuk Pod yang dikelola StatefulSet
+  template:
+    metadata:
+      labels:
+        app: mongodb # Label untuk Pod MongoDB
+    spec:
+      containers:
+        - name: mongodb # Nama container
+          image: mongo:4.4 # Image MongoDB yang digunakan
+          command: ["mongod", "--config", "/config/mongo.conf"] # Command untuk menjalankan MongoDB dengan konfigurasi khusus
+          ports:
+            - containerPort: 27017 # Port MongoDB yang diekspos di dalam container
+          volumeMounts:
+            - name: mongo-storage # Volume untuk data MongoDB
+              mountPath: /data/db # Path di container untuk menyimpan data
+            - name: config-volume # Volume untuk konfigurasi MongoDB
+              mountPath: /config
+            - name: secret-volume # Volume untuk credentials MongoDB
+              mountPath: /etc/mongo-credentials
+      volumes:
+        - name: config-volume # Definisi volume untuk konfigurasi
+          configMap:
+            name: mongo-config # Menggunakan ConfigMap untuk konfigurasi
+        - name: secret-volume # Definisi volume untuk credential
+          secret:
+            secretName: mongodb-secret # Menggunakan Secret untuk kredensial
+  volumeClaimTemplates: # Template untuk membuat PersistentVolumeClaim untuk setiap Pod
+    - metadata:
+        name: mongo-storage # Nama storage yang akan dibuat
+      spec:
+        accessModes: ["ReadWriteOnce"] # Mode akses - hanya satu node dapat menulis
+        resources:
+          requests:
+            storage: 1Gi # Request penyimpanan sebesar 1GB

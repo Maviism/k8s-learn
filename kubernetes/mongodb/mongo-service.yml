@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service # Objek Service untuk ekspos MongoDB ke aplikasi lainnya
+metadata:
+  name: mongodb-service # Nama service - digunakan sebagai DNS name di dalam cluster
+spec:
+  selector:
+    app: mongodb # Service akan mengarahkan traffic ke semua Pod dengan label app=mongodb
+  ports:
+    - port: 27017 # Port yang diekspos oleh service
+      targetPort: 27017 # Port pada Pod target
