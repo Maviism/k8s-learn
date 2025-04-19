@@ -3,7 +3,7 @@ kind: StatefulSet # StatefulSet untuk aplikasi stateful seperti database yang me
 metadata:
   name: mongodb # Nama StatefulSet
 spec:
-  serviceName: "mongodb-service" # Nama service yang terkait dengan StatefulSet
+  serviceName: "" # Nama service yang terkait dengan StatefulSet
   replicas: 1 # Jumlah Pod yang akan dibuat (hanya 1 instance MongoDB)
   selector:
     matchLabels:
@@ -16,7 +16,7 @@ spec:
       containers:
         - name: mongodb # Nama container
           image: mongo:4.4 # Image MongoDB yang digunakan
-          command: ["mongod", "--config", "/config/mongo.conf"] # Command untuk menjalankan MongoDB dengan konfigurasi khusus
+          # command: ["mongod", "--config", "/config/mongo.conf"] # Command untuk menjalankan MongoDB dengan konfigurasi khusus
           ports:
             - containerPort: 27017 # Port MongoDB yang diekspos di dalam container
           volumeMounts:
@@ -26,18 +26,23 @@ spec:
               mountPath: /config
             - name: secret-volume # Volume untuk credentials MongoDB
               mountPath: /etc/mongo-credentials
+          env: # Environment variables untuk konfigurasi MongoDB
+            - name: MONGO_INITDB_ROOT_USERNAME_FILE # Username MongoDB dari secret
+              value: /etc/mongo-credentials/MONGO_ROOT_USERNAME # Path ke file yang berisi username
+            - name: MONGO_INITDB_ROOT_PASSWORD_FILE # Password MongoDB dari secret
+              value: /etc/mongo-credentials/MONGO_ROOT_PASSWORD # Path ke file yang berisi password
+              
       volumes:
-        - name: config-volume # Definisi volume untuk konfigurasi
+        - name: mongo-storage # Definisi volume untuk konfigurasi
+          persistentVolumeClaim: # Menggunakan PersistentVolumeClaim untuk penyimpanan
+            claimName: mongo-pvc # Nama PersistentVolumeClaim yang digunakan
+        - name: config-volume
           configMap:
-            name: mongo-config # Menggunakan ConfigMap untuk konfigurasi
+            name: mongo-config # Menggunakan ConfigMap untuk konfigurasi MongoDB
+            items:
+              - key: mongo.conf # Kunci dalam ConfigMap yang akan di-mount
+                path: mongo.conf # Nama file di dalam container
         - name: secret-volume # Definisi volume untuk credential
           secret:
             secretName: mongodb-secret # Menggunakan Secret untuk kredensial
-  volumeClaimTemplates: # Template untuk membuat PersistentVolumeClaim untuk setiap Pod
-    - metadata:
-        name: mongo-storage # Nama storage yang akan dibuat
-      spec:
-        accessModes: ["ReadWriteOnce"] # Mode akses - hanya satu node dapat menulis
-        resources:
-          requests:
-            storage: 1Gi # Request penyimpanan sebesar 1GB
+  

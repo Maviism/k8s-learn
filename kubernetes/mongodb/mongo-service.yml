@@ -6,5 +6,6 @@ spec:
   selector:
     app: mongodb # Service akan mengarahkan traffic ke semua Pod dengan label app=mongodb
   ports:
-    - port: 27017 # Port yang diekspos oleh service
-      targetPort: 27017 # Port pada Pod target
+  - port: 27017 # Port yang diekspos oleh service
+    targetPort: 27017 # Port pada Pod target
+  clusterIP: None # Mengatur service menjadi headless, tidak ada IP virtual yang diberikan

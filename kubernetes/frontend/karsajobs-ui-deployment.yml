@@ -16,4 +16,7 @@ spec:
         - name: karsajobs-ui # Nama container frontend
           image: ghcr.io/maviism/karsajobs-ui:latest # Image frontend yang digunakan
           ports:
-            - containerPort: 80 # Port frontend yang diekspos di dalam container
+            - containerPort: 8000 # Port frontend yang diekspos di dalam container
+          env:
+            - name: VUE_APP_BACKEND
+              value: "http://127.0.0.1:59852/" # URL backend yang digunakan oleh frontend

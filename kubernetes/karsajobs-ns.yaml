@@ -4,9 +4,3 @@ metadata:
   name: karsajobs-ns # Nama namespace khusus untuk aplikasi
   labels:
     app: karsajobs # Label untuk mengidentifikasi namespace
-
-# Perintah kubectl berikut seharusnya berada di file bash terpisah, bukan di dalam file YAML
-# kubectl apply -f backend/karsajobs-deployment.yml -n karsajobs-ns
-# kubectl apply -f backend/karsajobs-service.yml -n karsajobs-ns
-# kubectl apply -f frontend/karsajobs-ui-deployment.yml -n karsajobs-ns
-# kubectl apply -f frontend/karsajobs-ui-service.yml -n karsajobs-ns

@@ -8,5 +8,5 @@ spec:
     app: karsajobs-ui # Service akan mengarahkan traffic ke Pod dengan label app=karsajobs-ui
   ports:
     - port: 80 # Port yang diekspos oleh service di dalam cluster
-      targetPort: 80 # Port pada Pod target
+      targetPort: 8000 # Port pada Pod target
       nodePort: 30001 # Port yang diekspos pada semua node cluster (untuk akses dari browser)

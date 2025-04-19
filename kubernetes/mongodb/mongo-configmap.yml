@@ -5,4 +5,4 @@ metadata:
 data:
   mongo.conf: | # File konfigurasi MongoDB yang akan di-mount ke container
     storage:
-      dbPath: /data/db # Path penyimpanan database di dalam container
+      dbPath: /data/db 
