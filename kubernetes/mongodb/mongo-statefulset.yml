@@ -5,6 +5,7 @@ metadata:
 spec:
   serviceName: "" # Nama service yang terkait dengan StatefulSet
   replicas: 1 # Jumlah Pod yang akan dibuat (hanya 1 instance MongoDB)
+  minReadySeconds: 10 # Waktu minimum sebelum Pod dianggap siap
   selector:
     matchLabels:
       app: mongodb # Selector untuk Pod yang dikelola StatefulSet
@@ -14,24 +15,22 @@ spec:
         app: mongodb # Label untuk Pod MongoDB
     spec:
       containers:
-        - name: mongodb # Nama container
-          image: mongo:4.4 # Image MongoDB yang digunakan
-          # command: ["mongod", "--config", "/config/mongo.conf"] # Command untuk menjalankan MongoDB dengan konfigurasi khusus
-          ports:
-            - containerPort: 27017 # Port MongoDB yang diekspos di dalam container
-          volumeMounts:
-            - name: mongo-storage # Volume untuk data MongoDB
-              mountPath: /data/db # Path di container untuk menyimpan data
-            - name: config-volume # Volume untuk konfigurasi MongoDB
-              mountPath: /config
-            - name: secret-volume # Volume untuk credentials MongoDB
-              mountPath: /etc/mongo-credentials
-          env: # Environment variables untuk konfigurasi MongoDB
-            - name: MONGO_INITDB_ROOT_USERNAME_FILE # Username MongoDB dari secret
-              value: /etc/mongo-credentials/MONGO_ROOT_USERNAME # Path ke file yang berisi username
-            - name: MONGO_INITDB_ROOT_PASSWORD_FILE # Password MongoDB dari secret
-              value: /etc/mongo-credentials/MONGO_ROOT_PASSWORD # Path ke file yang berisi password
-              
+      - name: mongodb # Nama container
+        image: mongo:5.0 # Image MongoDB yang digunakan
+        ports:
+          - containerPort: 27017 # Port yang digunakan oleh MongoDB
+        volumeMounts:
+          - name: mongo-storage # Volume untuk data MongoDB
+            mountPath: /data/db # Path di container untuk menyimpan data
+          - name: config-volume # Volume untuk konfigurasi MongoDB
+            mountPath: /config
+          - name: secret-volume # Volume untuk credentials MongoDB
+            mountPath: /etc/mongo-credentials
+        env: # Environment variables untuk konfigurasi MongoDB
+          - name: MONGO_INITDB_ROOT_USERNAME_FILE # Username MongoDB dari secret
+            value: /etc/mongo-credentials/MONGO_ROOT_USERNAME # Path ke file yang berisi username
+          - name: MONGO_INITDB_ROOT_PASSWORD_FILE # Password MongoDB dari secret
+            value: /etc/mongo-credentials/MONGO_ROOT_PASSWORD # Path ke file yang berisi password
       volumes:
         - name: mongo-storage # Definisi volume untuk konfigurasi
           persistentVolumeClaim: # Menggunakan PersistentVolumeClaim untuk penyimpanan

@@ -19,4 +19,4 @@ spec:
             - containerPort: 8000 # Port frontend yang diekspos di dalam container
           env:
             - name: VUE_APP_BACKEND
-              value: "http://127.0.0.1:59852/" # URL backend yang digunakan oleh frontend
+              value: "http://127.0.0.1:55658" # URL backend yang digunakan oleh frontend

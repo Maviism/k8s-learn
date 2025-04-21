@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: Namespace # Mendefinisikan resource jenis Namespace
-metadata:
-  name: monitoring-ns # Nama namespace untuk monitoring
-  labels:
-    app: karsajobs # Label untuk mengidentifikasi namespace
